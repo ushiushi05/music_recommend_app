@@ -1,0 +1,53 @@
+import streamlit as st
+import pandas as pd
+import numpy as np
+import gensim
+import collections
+
+st.title('音楽レコメンド')
+
+# 楽曲情報の読み込み
+music = pd.read_csv("data/data.csv")
+# アプリで4種類から選択できるようにする
+song_name = music['song_name'].tolist()
+artist = music['artist_name'].tolist()
+composer = music['composer'].tolist()
+lyricist = music['lyricist'].tolist()
+length = range(1, 11)
+# userが聞いた曲のdf
+unique = music.groupby('user_id').agg({'song_name': list})
+listened_list = unique['song_name'].tolist()
+
+
+st.markdown("## 1つの楽曲に対して他のユーザーが聞いた楽曲を表示します！")
+selected_music = st.selectbox("楽曲を選んでください", song_name)
+selected_length = st.selectbox("趣味の合う楽曲に絞り込む度合い", length)
+st.write(f"あなたが選択した楽曲は{selected_music}です")
+
+# 趣味が似ているユーザーの聞いた楽曲を表示
+st.markdown(f"### {selected_music}を聞いた人はこの楽曲も聴いています")
+results = []
+for i in range(len(listened_list)):
+  if selected_music in listened_list[i]:
+    if len(listened_list[i]) > selected_length:
+      results += listened_list[i]
+c = collections.Counter(results)
+values, counts = zip(*c.most_common(selected_length))
+
+st.write(values)
+
+
+# st.markdown("## 複数の楽曲を選んでおすすめの楽曲を表示する")
+
+# selected_music = st.multiselect("楽曲を複数選んでください", song_name)
+# selected_music_ids = [song_name_to_id[music] for music in selected_music]
+# vectors = [model.wv.get_vector(music_id) for music_id in selected_music_ids]
+# if len(selected_music) > 0:
+#     user_vector = np.mean(vectors, axis=0)
+#     st.markdown(f"### おすすめの楽曲")
+#     recommend_results = []
+#     for music_id, score in model.wv.most_similar(user_vector):
+#         title = music_id_to_title[music_id]
+#         recommend_results.append({"music_id":music_id, "title": title, "score": score})
+#     recommend_results = pd.DataFrame(recommend_results)
+#     st.write(recommend_results)
