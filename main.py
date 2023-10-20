@@ -19,9 +19,10 @@ unique = music.groupby('user_id').agg({'song_name': list})
 listened_list = unique['song_name'].tolist()
 
 
-st.markdown("## 1つの楽曲に対して他のユーザーが聞いた楽曲を表示します！")
+st.markdown("## 1つの楽曲に対して他のユーザーが聞いた楽曲を表示します")
 selected_music = st.selectbox("楽曲を選んでください", song_name)
-selected_length = st.selectbox("趣味の合う楽曲に絞り込む度合い", length)
+selected_length = 3
+howmany_length = st.selectbox("どのくらいの曲数レコメンドしますか", length)
 st.write(f"あなたが選択した楽曲は{selected_music}です")
 
 # 趣味が似ているユーザーの聞いた楽曲を表示
@@ -32,7 +33,7 @@ for i in range(len(listened_list)):
     if len(listened_list[i]) > selected_length:
       results += listened_list[i]
 c = collections.Counter(results)
-values, counts = zip(*c.most_common(selected_length))
+values, counts = zip(*c.most_common(howmany_length))
 
 st.write(values)
 
