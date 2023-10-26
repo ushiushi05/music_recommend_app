@@ -4,15 +4,22 @@ import numpy as np
 import gensim
 import collections
 
+st.set_page_config(
+  page_title='レコミュー',
+  page_icon='🎧'
+)
 st.title('音楽レコメンド')
 
 # 楽曲情報の読み込み
 music = pd.read_csv("data/data.csv")
+
+music_data = music.drop('user_id', axis=1)
+music_data = music_data.drop_duplicates().sort_values('song_name')
 # アプリで4種類から選択できるようにする
-song_name = music['song_name'].tolist()
-artist = music['artist_name'].tolist()
-composer = music['composer'].tolist()
-lyricist = music['lyricist'].tolist()
+song_name = sorted(list(set(music['song_name'].tolist())))
+artist = sorted(list(set(music['artist_name'].tolist())))
+composer = sorted(list(set(music['composer'].tolist())))
+lyricist = sorted(list(set(music['lyricist'].tolist())))
 length = range(1, 11)
 # userが聞いた曲のdf
 unique = music.groupby('user_id').agg({'song_name': list})
@@ -20,11 +27,11 @@ listened_list = unique['song_name'].tolist()
 
 
 st.markdown("## 1つの楽曲に対して他のユーザーが聞いた楽曲を表示します")
-selected_music = st.selectbox("楽曲を選んでください", song_name)
+selected_music = st.selectbox("楽曲を選んでください", music_data['song_name'])
 selected_length = 3
-howmany_length = st.selectbox("どのくらいの曲数レコメンドしますか", length)
+howmany_length = st.selectbox("どのくらいの曲数を表示しますか", length)
 st.write(f"あなたが選択した楽曲は{selected_music}です")
-
+# st.write(f'あなたが選んだ楽曲の情報は{music_data[selected_music]}')
 # 趣味が似ているユーザーの聞いた楽曲を表示
 st.markdown(f"### {selected_music}を聞いた人はこの楽曲も聴いています")
 results = []
