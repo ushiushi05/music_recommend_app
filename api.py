@@ -1,7 +1,7 @@
 from googleapiclient.discovery import build
 
 # Youtube API settings
-API_KEY = 'AIzaSyBamaWcpoM6nsBw17yfzyNupuYFJ3SQ6mw'
+API_KEY = '自分のAPIキー'
 YOUTUBE_API_SERVIVCE_NAME = 'youtube'
 YOUTUBE_API_VERSION = 'v3'
 
