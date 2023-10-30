@@ -2,7 +2,7 @@ import streamlit as st
 import pandas as pd
 import numpy as np
 import collections
-
+from api import get_video_info
 st.set_page_config(
   page_title='レコミュー',
   page_icon='🎧'
@@ -55,3 +55,25 @@ for j in range(len(values)):
   recommend_df = pd.concat([recommend_df, df_new])
 
 st.table(recommend_df)
+
+# 選んだ楽曲をyoutubeで検索する
+to_youtube = st.selectbox("YouTubeで検索する楽曲を選んでください", recommend_df['song_name'])
+youtubes = get_video_info(to_youtube)
+
+title_url_df = pd.DataFrame()
+for l in range(len(youtubes)):
+  video_title = youtubes[l]['snippet']['title']
+  videoId = youtubes[l]['id']['videoId']
+  videoDf = pd.DataFrame({'title': video_title, 
+                          'id':videoId},
+                          index=['#'])
+  title_url_df = pd.concat([title_url_df, videoDf])
+
+# タイトルとIDを表示して、IDを選択する
+st.table(title_url_df)
+
+url = 'https://www.youtube.com/watch?v='
+selected_id = st.selectbox("idを選んでください", title_url_df['id'])
+url += selected_id
+st.link_button("YouTubeへ移動します！", url)
+
