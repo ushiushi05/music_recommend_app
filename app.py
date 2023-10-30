@@ -1,7 +1,6 @@
 import streamlit as st
 import pandas as pd
 import numpy as np
-import gensim
 import collections
 
 st.set_page_config(
@@ -35,35 +34,24 @@ howmany_length = st.slider("どのくらいの曲数を表示しますか", 1, 1
 st.divider()
 music_info = music_data[music_data["song_name"].isin([selected_music])]
 
-st.write(f"あなたが選択した楽曲は{selected_music}です。楽曲の情報は下記のようになります")
-# st.write(f'あなたが選んだ楽曲の情報はこちらです')
+st.write(f"#### あなたが選択した楽曲は【{selected_music}】です。楽曲の情報は下記のようになります")
 st.table(music_info)
 
 # 趣味が似ているユーザーの聞いた楽曲を表示
-selected_length = 3
-st.markdown(f"### {selected_music}を聞いた人はこの楽曲も聴いています")
+threshold = 2
+st.markdown(f"#### 【{selected_music}】を聞いた人はこの楽曲も聴いています")
 results = []
 for i in range(len(listened_list)):
   if selected_music in listened_list[i]:
-    if len(listened_list[i]) > selected_length:
+    if len(listened_list[i]) > threshold:
       results += listened_list[i]
 c = collections.Counter(results)
 values, counts = zip(*c.most_common(howmany_length))
 
-st.write(values)
+recommend_df = pd.DataFrame()
+for j in range(len(values)):
+  recommend_info = music_data[music_data['song_name'].isin([values[j]])]
+  df_new = pd.DataFrame(recommend_info)
+  recommend_df = pd.concat([recommend_df, df_new])
 
-
-# st.markdown("## 複数の楽曲を選んでおすすめの楽曲を表示する")
-
-# selected_music = st.multiselect("楽曲を複数選んでください", song_name)
-# selected_music_ids = [song_name_to_id[music] for music in selected_music]
-# vectors = [model.wv.get_vector(music_id) for music_id in selected_music_ids]
-# if len(selected_music) > 0:
-#     user_vector = np.mean(vectors, axis=0)
-#     st.markdown(f"### おすすめの楽曲")
-#     recommend_results = []
-#     for music_id, score in model.wv.most_similar(user_vector):
-#         title = music_id_to_title[music_id]
-#         recommend_results.append({"music_id":music_id, "title": title, "score": score})
-#     recommend_results = pd.DataFrame(recommend_results)
-#     st.write(recommend_results)
+st.table(recommend_df)
