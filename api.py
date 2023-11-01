@@ -1,12 +1,8 @@
 from googleapiclient.discovery import build
-import os
-from dotenv import load_dotenv
-
+import streamlit as st
 # Youtube API settings
 
-dotenv_path = os.path.join(os.path.dirname(__file__), '.env')
-load_dotenv(dotenv_path)
-API_KEY = os.environ.get('GOOGLE_API_KEY')
+API_KEY = st.secrets['ENV']['GOOGLE_API_KEY']
 YOUTUBE_API_SERVIVCE_NAME = 'youtube'
 YOUTUBE_API_VERSION = 'v3'
 
