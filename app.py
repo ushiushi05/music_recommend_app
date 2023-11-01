@@ -20,7 +20,8 @@ music_data = music_data.drop_duplicates().sort_values('song_name').reset_index(d
 song_name = sorted(list(set(music['song_name'].tolist())))
 artist = sorted(list(set(music['artist_name'].tolist())))
 composer = sorted(list(set(music['composer'].tolist())))
-lyricist = sorted(list(set(music['lyricist'].tolist())))
+lyricist = sorted(list(set(str(x) for x in music['lyricist'].tolist())))
+
 
 # userが聞いた曲のdf
 unique = music.groupby('user_id').agg({'song_name': list})
