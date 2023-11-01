@@ -1,7 +1,8 @@
 from googleapiclient.discovery import build
+import os
 
 # Youtube API settings
-API_KEY = '自分のAPIキー'
+API_KEY = os.environ('GOOGLE_API_KEY')
 YOUTUBE_API_SERVIVCE_NAME = 'youtube'
 YOUTUBE_API_VERSION = 'v3'
 
